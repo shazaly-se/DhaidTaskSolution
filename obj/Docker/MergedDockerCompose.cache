@@ -1,0 +1,32 @@
+networks:
+  backend: {}
+services:
+  customerappapi:
+    build:
+      context: C:\Users\HP\source\repos\DhaidTaskSolution
+      dockerfile: CustomerAppApi/Dockerfile
+    container_name: customer-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DB_HOST: customerdb
+      DB_Name: customer
+      DB_SA_PASSWORD: Andandy@123
+    image: customerappapi
+    networks:
+      backend: {}
+    ports:
+    - published: 8002
+      target: 80
+    - target: 80
+  customerdb:
+    container_name: customer-db
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: Andandy@123
+    image: mcr.microsoft.com/mssql//server:2019-latest
+    networks:
+      backend: {}
+    ports:
+    - published: 8001
+      target: 1433
+version: '3.4'

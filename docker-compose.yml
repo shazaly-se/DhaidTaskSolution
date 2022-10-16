@@ -1,0 +1,107 @@
+version: '3.4'
+
+networks:
+  backend:
+  frontend:
+
+services:
+  customerdb:
+    container_name: customer-db
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - DB_PASSWORD=Andandy@123
+    networks:
+      - backend
+    ports:
+      - 18001:1433
+
+  customerappapi:
+    container_name: customer-api
+    image: ${DOCKER_REGISTRY-}customerappapi
+    build:
+      context: .
+      dockerfile: CustomerAppApi/Dockerfile
+    networks:
+      - backend
+    environment:
+      - DB_HOST=customerdb
+      - DB_Customer_NAME=db_customer
+      - DB_PASSWORD=Andandy@123
+
+  productdb:
+    container_name: product-db
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+     - DB_PASSWORD=Andandy@123
+    ports:
+     - 18003:3306
+    networks:
+     - backend
+
+  productwebapi:
+    container_name: product-api
+    image: ${DOCKER_REGISTRY-}productwebapi
+    build:
+      context: .
+      dockerfile: ProductWebApi/Dockerfile
+    networks:
+      - backend
+    environment:
+      - DB_HOST=productdb
+      - DB_Product_NAME=db_product
+      - DB_PASSWORD=Andandy@123
+  
+  orderdb:
+    container_name: order-db
+    image: mongo
+    ports:
+      - 18005:27017
+    networks:
+      - backend
+
+  orderappapi:
+    container_name: order-api
+    image: ${DOCKER_REGISTRY-}orderappapi
+    build:
+      context: .
+      dockerfile: OrderAppApi/Dockerfile
+    networks:
+      - backend
+    environment:
+      - DB_HOST=orderdb
+      - DB_Order_NAME=db_order
+  discountdb:
+    container_name: discount-db
+    image: mysql:8.0.29-oracle
+    environment:
+     - DB_PASSWORD=Andandy@123
+    ports:
+     - 18003:3306
+    networks:
+     - backend
+
+  discountappapi:
+    container_name: discount-api
+    image: ${DOCKER_REGISTRY-}discountappapi
+    build:
+      context: .
+      dockerfile: ProductAppApi/Dockerfile
+    networks:
+      - backend
+    environment:
+      - DB_HOST=discountdb
+      - DB_Discount_NAME=db_discount
+      - DB_PASSWORD=Andandy@123
+
+  apigateway:
+    container_name: api-gateway
+    image: ${DOCKER_REGISTRY-}apigateway
+    build:
+      context: .
+      dockerfile: ApiGateway/Dockerfile
+    ports:
+      - 8001:80
+    networks:
+      - backend
+      - frontend

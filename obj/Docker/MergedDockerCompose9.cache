@@ -1,0 +1,88 @@
+name: dockercompose10011943341538478796
+services:
+  customerappapi:
+    build:
+      context: C:\Users\HP\source\repos\DhaidTaskSolution
+      dockerfile: CustomerAppApi/Dockerfile
+    container_name: customer-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DB_HOST: customerdb
+      DB_Name: db_customer
+      DB_SA_PASSWORD: Andandy@123
+    image: customerappapi
+    networks:
+      backend: null
+    ports:
+    - mode: ingress
+      target: 80
+      protocol: tcp
+    - mode: ingress
+      target: 80
+      published: "8002"
+      protocol: tcp
+  customerdb:
+    container_name: customer-db
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: Andandy@123
+    image: mcr.microsoft.com/mssql//server:2019-latest
+    networks:
+      backend: null
+    ports:
+    - mode: ingress
+      target: 1433
+      published: "8001"
+      protocol: tcp
+  orderappapi:
+    build:
+      context: C:\Users\HP\source\repos\DhaidTaskSolution
+      dockerfile: OrderAppApi/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    image: orderappapi
+    networks:
+      default: null
+    ports:
+    - mode: ingress
+      target: 80
+      protocol: tcp
+  productappapi:
+    build:
+      context: C:\Users\HP\source\repos\DhaidTaskSolution
+      dockerfile: ProductAppApi/Dockerfile
+    container_name: product-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DB_HOST: productdb
+      DB_Name: db_product
+      DB_PASSWORD: Andandy@123
+    image: productappapi
+    networks:
+      backend: null
+    ports:
+    - mode: ingress
+      target: 80
+      protocol: tcp
+    - mode: ingress
+      target: 80
+      published: "8004"
+      protocol: tcp
+  productdb:
+    container_name: product-db
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: Andandy@123
+    image: mcr.microsoft.com/mssql//server:2019-latest
+    networks:
+      backend: null
+    ports:
+    - mode: ingress
+      target: 1433
+      published: "8003"
+      protocol: tcp
+networks:
+  backend:
+    name: dockercompose10011943341538478796_backend
+  default:
+    name: dockercompose10011943341538478796_default

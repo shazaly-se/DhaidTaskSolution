@@ -1,0 +1,54 @@
+networks:
+  backend: {}
+services:
+  customerappapi:
+    build:
+      context: C:\Users\HP\source\repos\DhaidTaskSolution
+      dockerfile: CustomerAppApi/Dockerfile
+      labels:
+        com.microsoft.created-by: visual-studio
+        com.microsoft.visual-studio.project-name: CustomerAppApi
+      target: base
+    container_name: customer-api
+    entrypoint: tail -f /dev/null
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS: "true"
+      DB_HOST: customerdb
+      DB_Name: customer
+      DB_SA_PASSWORD: Andandy@123
+      DOTNET_USE_POLLING_FILE_WATCHER: '1'
+      NUGET_FALLBACK_PACKAGES: ''
+    image: customerappapi:dev
+    labels:
+      com.microsoft.visualstudio.debuggee.arguments: ' --additionalProbingPath /root/.nuget/packages  "/app/bin/Debug/net6.0/CustomerAppApi.dll"'
+      com.microsoft.visualstudio.debuggee.killprogram: /bin/sh -c "if PID=$$(pidof
+        dotnet); then kill $$PID; fi"
+      com.microsoft.visualstudio.debuggee.program: dotnet
+      com.microsoft.visualstudio.debuggee.workingdirectory: /app
+    networks:
+      backend: {}
+    ports:
+    - published: 8002
+      target: 80
+    - target: 80
+    tty: true
+    volumes:
+    - C:\Users\HP\source\repos\DhaidTaskSolution\CustomerAppApi:/app:rw
+    - C:\Users\HP\vsdbg\vs2017u5:/remote_debugger:rw
+    - C:\Users\HP\AppData\Roaming\ASP.NET\Https:/root/.aspnet/https:ro
+    - C:\Users\HP\AppData\Roaming\Microsoft\UserSecrets:/root/.microsoft/usersecrets:ro
+    - C:\Users\HP\.nuget\packages:/root/.nuget/packages:ro
+    - C:\Users\HP\source\repos\DhaidTaskSolution:/src:rw
+  customerdb:
+    container_name: customer-db
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: Andandy@123
+    image: mcr.microsoft.com/mssql//server:2019-latest
+    networks:
+      backend: {}
+    ports:
+    - published: 8001
+      target: 1433
+version: '3.4'
